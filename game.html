@@ -101,13 +101,13 @@
                     let result = num1 * num2;
                     if (result <= 99) {
                         if (blankPosition === 0) {
-                            exercises.push(`<input type="number" class="answer" data-correct="${num1}" aria-label="Wprowadź pierwszą liczbę" min="1" max="99" /> * ${num2} = ${result}`);
+                            exercises.push(`<input type="number" class="answer" data-correct="${num1}" aria-label="Wprowadź pierwszą liczbę" min="1" max="99" inputmode="numeric" pattern="\\d*" /> * ${num2} = ${result}`);
                             correctAnswer = num1;
                         } else if (blankPosition === 1) {
-                            exercises.push(`${num1} * <input type="number" class="answer" data-correct="${num2}" aria-label="Wprowadź drugą liczbę" min="1" max="99" /> = ${result}`);
+                            exercises.push(`${num1} * <input type="number" class="answer" data-correct="${num2}" aria-label="Wprowadź drugą liczbę" min="1" max="99" inputmode="numeric" pattern="\\d*" /> = ${result}`);
                             correctAnswer = num2;
                         } else {
-                            exercises.push(`${num1} * ${num2} = <input type="number" class="answer" data-correct="${result}" aria-label="Wprowadź wynik" min="1" max="99" />`);
+                            exercises.push(`${num1} * ${num2} = <input type="number" class="answer" data-correct="${result}" aria-label="Wprowadź wynik" min="1" max="99" inputmode="numeric" pattern="\\d*" />`);
                             correctAnswer = result;
                         }
                     } else {
@@ -117,13 +117,13 @@
                     let result = num1 * num2;
                     if (result <= 99) {
                         if (blankPosition === 0) {
-                            exercises.push(`<input type="number" class="answer" data-correct="${result}" aria-label="Wprowadź wynik dzielenia" min="1" max="99" /> : ${num2} = ${num1}`);
+                            exercises.push(`<input type="number" class="answer" data-correct="${result}" aria-label="Wprowadź wynik dzielenia" min="1" max="99" inputmode="numeric" pattern="\\d*" /> : ${num2} = ${num1}`);
                             correctAnswer = result;
                         } else if (blankPosition === 1) {
-                            exercises.push(`${result} : <input type="number" class="answer" data-correct="${num2}" aria-label="Wprowadź dzielnik" min="1" max="99" /> = ${num1}`);
+                            exercises.push(`${result} : <input type="number" class="answer" data-correct="${num2}" aria-label="Wprowadź dzielnik" min="1" max="99" inputmode="numeric" pattern="\\d*" /> = ${num1}`);
                             correctAnswer = num2;
                         } else {
-                            exercises.push(`${result} : ${num2} = <input type="number" class="answer" data-correct="${num1}" aria-label="Wprowadź dzielnik" min="1" max="99" />`);
+                            exercises.push(`${result} : ${num2} = <input type="number" class="answer" data-correct="${num1}" aria-label="Wprowadź dzielnik" min="1" max="99" inputmode="numeric" pattern="\\d*" />`);
                             correctAnswer = num1;
                         }
                     } else {
@@ -173,9 +173,9 @@
             if (score <= 4) {
                 resultEmoji.textContent = '😭'; // Emotka płacząca
             } else if (score <= 8) {
-                resultEmoji.textContent = '👍'; // Kciuk w górę
+                resultEmoji.textContent = '👍'; // Emotka kciuk w górę
             } else {
-                resultEmoji.textContent = '🏆'; // Puchar
+                resultEmoji.textContent = '🏆'; // Emotka puchar
             }
             if (timer) {
                 clearInterval(timer);
@@ -211,7 +211,6 @@
             startTimer();
         });
         checkButton.addEventListener('click', checkAnswers);
-
     </script>
 </body>
 </html>
