@@ -72,7 +72,7 @@
 
         let correctAnswers = [];
         let timer;
-        let timeLeft = 30; // 5 minut w sekundach
+        let timeLeft = 300; // 5 minut w sekundach
 
         // Funkcja do losowania liczb w danym zakresie
         function getRandomNumber(min, max) {
@@ -174,7 +174,7 @@
         // Funkcja do uruchamiania stopera
         function startTimer() {
             timerDiv.classList.remove('hidden');
-            timeLeft = 30; // Resetuje czas do 5 minut
+            timeLeft = 300; // Resetuje czas do 5 minut
             updateTimer();
 
             timer = setInterval(() => {
