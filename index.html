@@ -41,41 +41,52 @@
         const generateButton = document.getElementById('generate');
         const printButton = document.getElementById('print');
 
-        function getRandomNumber(max) {
-            return Math.floor(Math.random() * max) + 1;
+        // Funkcja do losowania liczb w danym zakresie
+        function getRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
+        // Funkcja do generowania losowych działań
         function generateExercise() {
             let exercises = [];
             for (let i = 0; i < 10; i++) {
-                let num1 = getRandomNumber(10);
-                let num2 = getRandomNumber(10);
+                let num1 = getRandomNumber(1, 99); // Pierwsza liczba od 1 do 99
+                let num2 = getRandomNumber(2, 99); // Druga liczba od 2 do 99
                 let isMultiplication = Math.random() > 0.5;
-                let blankPosition = Math.floor(Math.random() * 3);
+                let blankPosition = Math.floor(Math.random() * 3); // Pozycja pustego miejsca
 
                 if (isMultiplication) {
                     let result = num1 * num2;
-                    if (blankPosition === 0) {
-                        exercises.push(`[ ] * ${num2} = ${result}`);
-                    } else if (blankPosition === 1) {
-                        exercises.push(`${num1} * [ ] = ${result}`);
+                    if (result <= 99) { // Sprawdzamy, czy wynik jest dwucyfrowy
+                        if (blankPosition === 0) {
+                            exercises.push(`[ ] * ${num2} = ${result}`);
+                        } else if (blankPosition === 1) {
+                            exercises.push(`${num1} * [ ] = ${result}`);
+                        } else {
+                            exercises.push(`${num1} * ${num2} = [ ]`);
+                        }
                     } else {
-                        exercises.push(`${num1} * ${num2} = [ ]`);
+                        i--; // Jeśli wynik jest większy niż 99, powtórz pętlę
                     }
                 } else {
-                    let result = num1 * num2;
-                    if (blankPosition === 0) {
-                        exercises.push(`[ ] : ${num2} = ${num1}`);
-                    } else if (blankPosition === 1) {
-                        exercises.push(`${result} : [ ] = ${num1}`);
+                    let result = num1 * num2; // Num1 i num2 są dzielnikiem i wynikiem mnożenia
+                    if (result <= 99) { // Sprawdzamy, czy wynik dzielenia jest dwucyfrowy
+                        if (blankPosition === 0) {
+                            exercises.push(`[ ] : ${num2} = ${num1}`);
+                        } else if (blankPosition === 1) {
+                            exercises.push(`${result} : [ ] = ${num1}`);
+                        } else {
+                            exercises.push(`${result} : ${num2} = [ ]`);
+                        }
                     } else {
-                        exercises.push(`${result} : ${num2} = [ ]`);
+                        i--; // Jeśli wynik dzielenia jest większy niż 99, powtórz pętlę
                     }
                 }
             }
             return exercises;
         }
 
+        // Funkcja do wyświetlania ćwiczeń
         function displayExercises() {
             exercisesContainer.innerHTML = ''; // Czyści poprzednie zestawy
             for (let j = 0; j < 4; j++) { // Generuje 4 zestawy po 10 działań
