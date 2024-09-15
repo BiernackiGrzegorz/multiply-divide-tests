@@ -3,50 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ćwiczenia z Mnożenia i Dzielenia</title>
+    <title>Ćwiczenia z Mnożenia i Dzielenia dka Agatki</title>
+    <!-- Dodanie Tailwind CSS za pomocą CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        button {
-            padding: 10px 15px;
-            margin: 10px;
-            font-size: 16px;
-        }
-        .exercise {
-            font-size: 18px;
-            margin: 10px 0;
-        }
-        .empty {
-            border-bottom: 1px solid #000;
-            width: 30px;
-            display: inline-block;
-            text-align: center;
-        }
-        .exercise-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
-            gap: 10px;
-            height: 100vh;
-            border: 2px solid black;
-        }
-        .exercise-set {
-            border-left: 2px solid black;
-            border-top: 2px solid black;
-            padding: 10px;
-        }
-        .exercise-set:first-child {
-            border-left: none;
-            border-top: none;
-        }
-        .exercise-set:nth-child(2) {
-            border-top: none;
-        }
-        .exercise-set:nth-child(3) {
-            border-left: none;
-        }
         @media print {
             button, h1 {
                 display: none;
@@ -56,17 +16,25 @@
             }
             .exercise-container {
                 height: 100vh;
-                margin: 0;
                 page-break-inside: avoid;
             }
         }
     </style>
 </head>
-<body>
-    <h1>Ćwiczenia z Mnożenia i Dzielenia</h1>
-    <button id="generate">LOSUJ</button>
-    <button id="print">Drukuj</button>
-    <div id="exercises-container" class="exercise-container"></div>
+<body class="bg-gray-100 text-gray-800 p-8">
+    <h1 class="text-3xl font-bold mb-6 text-center">Ćwiczenia z Mnożenia i Dzielenia</h1>
+    <div class="flex justify-center mb-4">
+        <button id="generate" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded mr-4 shadow">
+            LOSUJ
+        </button>
+        <button id="print" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded shadow">
+            Drukuj
+        </button>
+    </div>
+
+    <div id="exercises-container" class="grid grid-cols-2 gap-4 h-screen">
+        <!-- Tutaj zostaną wygenerowane ćwiczenia -->
+    </div>
 
     <script>
         const exercisesContainer = document.getElementById('exercises-container');
@@ -83,7 +51,7 @@
                 let num1 = getRandomNumber(10);
                 let num2 = getRandomNumber(10);
                 let isMultiplication = Math.random() > 0.5;
-                let blankPosition = Math.floor(Math.random() * 3); // 0, 1, 2
+                let blankPosition = Math.floor(Math.random() * 3);
 
                 if (isMultiplication) {
                     let result = num1 * num2;
@@ -95,7 +63,7 @@
                         exercises.push(`${num1} * ${num2} = [ ]`);
                     }
                 } else {
-                    let result = num1 * num2; // wynik dzielenia
+                    let result = num1 * num2;
                     if (blankPosition === 0) {
                         exercises.push(`[ ] : ${num2} = ${num1}`);
                     } else if (blankPosition === 1) {
@@ -109,15 +77,16 @@
         }
 
         function displayExercises() {
-            exercisesContainer.innerHTML = '';  // Czyści poprzednie zestawy
-            for (let j = 0; j < 4; j++) {       // Generuje 4 zestawy po 10 działań
+            exercisesContainer.innerHTML = ''; // Czyści poprzednie zestawy
+            for (let j = 0; j < 4; j++) { // Generuje 4 zestawy po 10 działań
                 let exerciseSetDiv = document.createElement('div');
-                exerciseSetDiv.className = 'exercise-set';
+                exerciseSetDiv.className = 'exercise-set p-2';
+
                 let exercises = generateExercise();
                 exercises.forEach(exercise => {
                     let div = document.createElement('div');
-                    div.className = 'exercise';
-                    div.innerHTML = exercise.replace('[ ]', '<span class="empty">&nbsp;</span>');
+                    div.className = 'exercise my-1 text-base';
+                    div.innerHTML = exercise.replace('[ ]', '<span class="empty inline-block w-8 border-b-2 border-gray-500">&nbsp;</span>');
                     exerciseSetDiv.appendChild(div);
                 });
                 exercisesContainer.appendChild(exerciseSetDiv);
@@ -125,7 +94,6 @@
         }
 
         generateButton.addEventListener('click', displayExercises);
-
         printButton.addEventListener('click', () => {
             window.print();
         });
