@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ćwiczenia z Mnożenia i Dzielenia</title>
+    <!-- Dodanie Tailwind CSS za pomocą CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            button, h1 {
+                display: none;
+            }
+            body {
+                margin: 0;
+            }
+            .exercise-container {
+                height: 100vh;
+                page-break-inside: avoid;
+            }
+        }
+        .hidden {
+            display: none;
+        }
+        .exercise-container {
+            position: relative;
+        }
+        .timer {
+            font-size: 1.5rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-pink-200 text-gray-800 p-8">
+    <h1 class="text-3xl font-bold mb-6 text-center">Ćwiczenia z Mnożenia i Dzielenia <br />dla Agatki 🧑‍🎓🐱</h1>
+    <div class="flex justify-center mb-4">
+        <button id="generate" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded mr-4 shadow">
+            🎲 LOSUJ
+        </button>
+        <button id="generate-timed" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded mr-4 shadow">
+            ⏱️ LOSUJ NA CZAS
+        </button>
+        <button id="check" class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded mr-4 shadow hidden">
+            ✅ Sprawdź
+        </button>
+    </div>
+
+    <div id="exercises-container" class="grid grid-cols-1 gap-4">
+        <!-- Tutaj zostaną wygenerowane ćwiczenia -->
+    </div>
+
+    <div id="result" class="text-center mt-6 text-xl hidden">
+        Wynik: <span id="score"></span> / 10
+    </div>
+
+    <div id="timer" class="timer text-center hidden">
+        Pozostały czas: <span id="time">05:00</span>
+    </div>
+
+    <audio id="alarm" src="https://www.soundjay.com/button/beep-07.wav" class="hidden"></audio>
+
+    <script>
+        const exercisesContainer = document.getElementById('exercises-container');
+        const generateButton = document.getElementById('generate');
+        const generateTimedButton = document.getElementById('generate-timed');
+        const checkButton = document.getElementById('check');
+        const resultDiv = document.getElementById('result');
+        const scoreSpan = document.getElementById('score');
+        const timerDiv = document.getElementById('timer');
+        const timeSpan = document.getElementById('time');
+        const alarm = document.getElementById('alarm');
+
+        let correctAnswers = [];
+        let timer;
+        let timeLeft = 30; // 5 minut w sekundach
+
+        // Funkcja do losowania liczb w danym zakresie
+        function getRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // Funkcja do generowania losowych działań
+        function generateExercise() {
+            let exercises = [];
+            correctAnswers = []; // Resetuje poprawne odpowiedzi
+            for (let i = 0; i < 10; i++) {
+                let num1 = getRandomNumber(1, 99); // Pierwsza liczba od 1 do 99
+                let num2 = getRandomNumber(2, 99); // Druga liczba od 2 do 99
+                let isMultiplication = Math.random() > 0.5;
+                let blankPosition = Math.floor(Math.random() * 3); // Pozycja pustego miejsca
+                let correctAnswer;
+
+                if (isMultiplication) {
+                    let result = num1 * num2;
+                    if (result <= 99) { // Sprawdzamy, czy wynik jest dwucyfrowy
+                        if (blankPosition === 0) {
+                            exercises.push(`<input type="number" class="answer" data-correct="${num1 * num2}" /> * ${num2} = ${result}`);
+                            correctAnswer = num1 * num2;
+                        } else if (blankPosition === 1) {
+                            exercises.push(`${num1} * <input type="number" class="answer" data-correct="${num1 * num2}" /> = ${result}`);
+                            correctAnswer = num2;
+                        } else {
+                            exercises.push(`${num1} * ${num2} = <input type="number" class="answer" data-correct="${num1 * num2}" />`);
+                            correctAnswer = result;
+                        }
+                    } else {
+                        i--; // Jeśli wynik jest większy niż 99, powtórz pętlę
+                    }
+                } else {
+                    let result = num1 * num2; // Num1 i num2 są dzielnikiem i wynikiem mnożenia
+                    if (result <= 99) { // Sprawdzamy, czy wynik dzielenia jest dwucyfrowy
+                        if (blankPosition === 0) {
+                            exercises.push(`<input type="number" class="answer" data-correct="${num1}" /> : ${num2} = ${num1}`);
+                            correctAnswer = num1;
+                        } else if (blankPosition === 1) {
+                            exercises.push(`${result} : <input type="number" class="answer" data-correct="${num1}" /> = ${num1}`);
+                            correctAnswer = num2;
+                        } else {
+                            exercises.push(`${result} : ${num2} = <input type="number" class="answer" data-correct="${num1}" />`);
+                            correctAnswer = result;
+                        }
+                    } else {
+                        i--; // Jeśli wynik dzielenia jest większy niż 99, powtórz pętlę
+                    }
+                }
+                correctAnswers.push(correctAnswer);
+            }
+            return exercises;
+        }
+
+        // Funkcja do wyświetlania ćwiczeń
+        function displayExercises() {
+            exercisesContainer.innerHTML = ''; // Czyści poprzednie zestawy
+            let exercises = generateExercise();
+            exercises.forEach(exercise => {
+                let div = document.createElement('div');
+                div.className = 'exercise my-1 text-base';
+                div.innerHTML = exercise;
+                exercisesContainer.appendChild(div);
+            });
+            checkButton.classList.remove('hidden');
+            resultDiv.classList.add('hidden');
+            timerDiv.classList.add('hidden'); // Ukrywa stoper, jeśli jest widoczny
+            if (timer) clearInterval(timer); // Jeśli stoper był uruchomiony, zatrzymaj go
+        }
+
+        // Funkcja do sprawdzania odpowiedzi
+        function checkAnswers() {
+            const answers = document.querySelectorAll('.answer');
+            let score = 0;
+
+            answers.forEach((input, index) => {
+                const userAnswer = parseFloat(input.value);
+                const correctAnswer = parseFloat(input.getAttribute('data-correct'));
+
+                if (userAnswer === correctAnswer) {
+                    input.classList.add('bg-green-200');
+                    score++;
+                } else {
+                    input.classList.add('bg-red-200');
+                    input.insertAdjacentHTML('afterend', `<span class="text-red-600"> (${correctAnswer})</span>`);
+                }
+                input.setAttribute('readonly', 'true'); // Blokuje pole do edycji
+            });
+
+            scoreSpan.textContent = score;
+            resultDiv.classList.remove('hidden');
+            if (timer) {
+                clearInterval(timer); // Zatrzymuje stoper, jeśli jest uruchomiony
+                timerDiv.classList.add('hidden'); // Ukrywa stoper
+            }
+        }
+
+        // Funkcja do uruchamiania stopera
+        function startTimer() {
+            timerDiv.classList.remove('hidden');
+            timeLeft = 30; // Resetuje czas do 5 minut
+            updateTimer();
+
+            timer = setInterval(() => {
+                timeLeft--;
+                updateTimer();
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    alarm.play(); // Odtwarza dźwięk alarmu
+                    checkAnswers();
+                }
+            }, 1000);
+        }
+
+        // Funkcja do aktualizacji wyświetlania stopera
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timeSpan.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        generateButton.addEventListener('click', displayExercises);
+        generateTimedButton.addEventListener('click', () => {
+            displayExercises();
+            startTimer();
+        });
+        checkButton.addEventListener('click', checkAnswers);
+    </script>
+</body>
+</html>
